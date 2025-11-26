@@ -39,4 +39,12 @@ public class SystemCalls {
                 memory.capacity()
         );
     }
+
+        public static void sysTerminateProcess(PCB pcb, MemoryManager memory) {
+        pcb.state = ProcessState.TERMINATED;
+        memory.free(pcb.memoryMB);
+        System.out.printf("sysTerminateProcess: P%d terminated, freed %d MB%n",
+                pcb.id, pcb.memoryMB);
+    }
+
 }

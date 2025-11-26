@@ -78,44 +78,74 @@ public class Main {
         SchedulerResult result;
 
         switch (choice) {
-            case 1:
-                result = Scheduler.runSJF(processes);
-                System.out.println("\n=== SJF Results ===");
-                printResults(result, processes);
-                System.out.println("\nSystem call: process info after SJF:");
-                    for (PCB p : processes) {
-                        SystemCalls.sysPrintProcessInfo(p);
-                    }
-                System.out.println("\nSystem call: memory info:");
-                SystemCalls.sysPrintMemoryInfo(memory);
+        case 1:
+        // SJF
+        result = Scheduler.runSJF(processes);
+        System.out.println("\n=== SJF Results ===");
+        printResults(result, processes);
 
-                break;
+        System.out.println("\nSystem call: process info after SJF:");
+        for (PCB p : processes) {
+            SystemCalls.sysPrintProcessInfo(p);
+        }
 
-            case 2:
-                result = Scheduler.runRR(processes, 6);
-                System.out.println("\n=== Round Robin (q=6 ms) Results ===");
-                printResults(result, processes);
-                System.out.println("\nSystem call: process info after RR:");
-                    for (PCB p : processes) {
-                        SystemCalls.sysPrintProcessInfo(p);
-                    }
-                System.out.println("\nSystem call: memory info:");
-                SystemCalls.sysPrintMemoryInfo(memory);
+        System.out.println("\nSystem call: memory info BEFORE termination:");
+        SystemCalls.sysPrintMemoryInfo(memory);
 
-                break;
+        System.out.println("\nTerminating processes via system call...");
+        for (PCB p : processes) {
+            SystemCalls.sysTerminateProcess(p, memory);
+        }
 
-            case 3:
-                result = Scheduler.runPriority(processes, 10); // aging every 10 ms of waiting
-                System.out.println("\n=== Priority Scheduling Results ===");
-                printResults(result, processes);
-                System.out.println("\nSystem call: process info after PRIO:");
-                    for (PCB p : processes) {
-                        SystemCalls.sysPrintProcessInfo(p);
-                     }
-                System.out.println("\nSystem call: memory info:");
-                SystemCalls.sysPrintMemoryInfo(memory);
+        System.out.println("\nSystem call: memory info AFTER termination:");
+        SystemCalls.sysPrintMemoryInfo(memory);
+        break;
 
-                break;
+        case 2:
+        // Round Robin (q = 6 ms)
+        result = Scheduler.runRR(processes, 6);
+        System.out.println("\n=== Round Robin (q=6 ms) Results ===");
+        printResults(result, processes);
+
+        System.out.println("\nSystem call: process info after RR:");
+        for (PCB p : processes) {
+            SystemCalls.sysPrintProcessInfo(p);
+        }
+
+        System.out.println("\nSystem call: memory info BEFORE termination:");
+        SystemCalls.sysPrintMemoryInfo(memory);
+
+        System.out.println("\nTerminating processes via system call...");
+        for (PCB p : processes) {
+            SystemCalls.sysTerminateProcess(p, memory);
+        }
+
+        System.out.println("\nSystem call: memory info AFTER termination:");
+        SystemCalls.sysPrintMemoryInfo(memory);
+        break;
+
+        case 3:
+            // Priority Scheduling with aging
+            result = Scheduler.runPriority(processes, 10); // aging every 10 ms
+            System.out.println("\n=== Priority Scheduling Results ===");
+            printResults(result, processes);
+
+        System.out.println("\nSystem call: process info after Priority:");
+            for (PCB p : processes) {
+                SystemCalls.sysPrintProcessInfo(p);
+        }
+
+        System.out.println("\nSystem call: memory info BEFORE termination:");
+        SystemCalls.sysPrintMemoryInfo(memory);
+
+        System.out.println("\nTerminating processes via system call...");
+            for (PCB p : processes) {
+                SystemCalls.sysTerminateProcess(p, memory);
+        }
+
+        System.out.println("\nSystem call: memory info AFTER termination:");
+        SystemCalls.sysPrintMemoryInfo(memory);
+        break;
 
             default:
                 System.out.println("Invalid choice.");

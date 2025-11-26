@@ -178,7 +178,7 @@ public class Scheduler {
         // We’ll use this as a starvation threshold like the spec says:
         // "waited more than the degree of multiprogramming at acceptance"
         int degreeOfMultiprogramming = n;
-        int starvationThreshold = degreeOfMultiprogramming * agingIntervalMs;
+
 
         while (finishedCount < n) {
             int bestIdx = -1;
@@ -222,13 +222,13 @@ public class Scheduler {
 
             gantt.add(new GanttEntry(current.id, start, end));
 
-            // Starvation detection per spec
-            if (current.waitingTimeMs > starvationThreshold) {
-                System.out.printf(
-                        ">> [PRIO] Starvation detected for P%d: waited %d ms (threshold %d)%n",
-                        current.id, current.waitingTimeMs, starvationThreshold
-                );
-            }
+            
+            if (current.waitingTimeMs > degreeOfMultiprogramming) {
+            System.out.printf(
+                ">> [PRIO] Starvation detected for P%d: waited %d ms (threshold %d)%n",
+                    current.id, current.waitingTimeMs, degreeOfMultiprogramming
+            );
+        }
         }
 
         double avgWait = (double) totalWaiting / n;
