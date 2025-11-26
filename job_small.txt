@@ -1,0 +1,5 @@
+[Begin of job.txt]
+1:5:2;500
+2:8:5;700
+3:3:1;200
+[End of job.txt]
