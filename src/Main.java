@@ -1,7 +1,9 @@
 import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Main {
@@ -41,13 +43,13 @@ public class Main {
         reader.join();
 
         // Give Loader some time to load whatever fits into memory
-        Thread.sleep(500); // half a second is enough for our simple test
+        Thread.sleep(500);
 
-        // Phase 2 only: stop loader, because no scheduler will free memory yet
+        // Phase 2 hack: stop loader since we don't free memory yet
         loader.interrupt();
         loader.join();
 
-        System.out.println("\n--- Ready Queue Snapshot ---");
+        System.out.println("\n--- Ready Queue Snapshot (before scheduling) ---");
         for (PCB p : queues.readyQueue) {
             System.out.println(p);
         }
@@ -55,8 +57,64 @@ public class Main {
         System.out.printf("Jobs still in JobQueue (not loaded due to memory cap): %d%n",
                 queues.jobQueue.size());
 
-        // In Phase 3, once the scheduler exists and calls memory.free(p.memoryMB),
-        // we will REMOVE the interrupt hack and let Loader run normally until
-        // jobQueue is empty and fileDone == true.
+        // Take a copy of the ready queue into a list for scheduling
+        List<PCB> processes = new ArrayList<>(queues.readyQueue);
+        if (processes.isEmpty()) {
+            System.out.println("No processes in ready queue. Nothing to schedule.");
+            return;
+        }
+
+        // ---- Scheduling menu ----
+        @SuppressWarnings("resource")
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("\nChoose scheduling algorithm:");
+        System.out.println("1) Shortest Job First (non-preemptive)");
+        System.out.println("2) Round Robin (q = 6 ms) ");
+        System.out.println("3) Priority Scheduling [NOT IMPLEMENTED YET]");
+        System.out.print("Enter choice: ");
+
+        int choice = scanner.nextInt();
+        SchedulerResult result;
+
+        switch (choice) {
+            case 1:
+                result = Scheduler.runSJF(processes);
+                System.out.println("\n=== SJF Results ===");
+                printResults(result, processes);
+                break;
+
+            case 2:
+                result = Scheduler.runRR(processes, 6);
+                System.out.println("\n=== Round Robin (q=6 ms) Results ===");
+                printResults(result, processes);
+                break;
+
+            case 3:
+                System.out.println("Priority Scheduling is not implemented yet.");
+                break;
+
+            default:
+                System.out.println("Invalid choice.");
+        }
+    }
+
+    private static void printResults(SchedulerResult result, List<PCB> processes) {
+        System.out.println("\nGantt Chart:");
+        // Simple text Gantt: | P1 (0-10) | P2 (10-25) | ...
+        for (GanttEntry e : result.gantt) {
+            System.out.printf("| P%d (%d-%d) ", e.processId, e.startTime, e.endTime);
+        }
+        System.out.println("|");
+
+        System.out.println("\nPer-process stats:");
+        for (PCB p : processes) {
+            System.out.printf(
+                "P%d: waiting=%d ms, turnaround=%d ms%n",
+                p.id, p.waitingTimeMs, p.turnaroundTimeMs
+            );
+        }
+
+        System.out.printf("%nAverage waiting time: %.2f ms%n", result.avgWaitingTime);
+        System.out.printf("Average turnaround time: %.2f ms%n", result.avgTurnaroundTime);
     }
 }
