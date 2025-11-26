@@ -69,8 +69,9 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         System.out.println("\nChoose scheduling algorithm:");
         System.out.println("1) Shortest Job First (non-preemptive)");
-        System.out.println("2) Round Robin (q = 6 ms) ");
-        System.out.println("3) Priority Scheduling [NOT IMPLEMENTED YET]");
+        System.out.println("2) Round Robin (q = 6 ms)");
+        System.out.println("3) Priority Scheduling (non-preemptive, with aging)");
+
         System.out.print("Enter choice: ");
 
         int choice = scanner.nextInt();
@@ -90,7 +91,9 @@ public class Main {
                 break;
 
             case 3:
-                System.out.println("Priority Scheduling is not implemented yet.");
+                result = Scheduler.runPriority(processes, 10); // aging every 10 ms of waiting
+                System.out.println("\n=== Priority Scheduling Results ===");
+                printResults(result, processes);
                 break;
 
             default:
