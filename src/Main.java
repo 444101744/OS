@@ -82,18 +82,39 @@ public class Main {
                 result = Scheduler.runSJF(processes);
                 System.out.println("\n=== SJF Results ===");
                 printResults(result, processes);
+                System.out.println("\nSystem call: process info after SJF:");
+                    for (PCB p : processes) {
+                        SystemCalls.sysPrintProcessInfo(p);
+                    }
+                System.out.println("\nSystem call: memory info:");
+                SystemCalls.sysPrintMemoryInfo(memory);
+
                 break;
 
             case 2:
                 result = Scheduler.runRR(processes, 6);
                 System.out.println("\n=== Round Robin (q=6 ms) Results ===");
                 printResults(result, processes);
+                System.out.println("\nSystem call: process info after RR:");
+                    for (PCB p : processes) {
+                        SystemCalls.sysPrintProcessInfo(p);
+                    }
+                System.out.println("\nSystem call: memory info:");
+                SystemCalls.sysPrintMemoryInfo(memory);
+
                 break;
 
             case 3:
                 result = Scheduler.runPriority(processes, 10); // aging every 10 ms of waiting
                 System.out.println("\n=== Priority Scheduling Results ===");
                 printResults(result, processes);
+                System.out.println("\nSystem call: process info after PRIO:");
+                    for (PCB p : processes) {
+                        SystemCalls.sysPrintProcessInfo(p);
+                     }
+                System.out.println("\nSystem call: memory info:");
+                SystemCalls.sysPrintMemoryInfo(memory);
+
                 break;
 
             default:

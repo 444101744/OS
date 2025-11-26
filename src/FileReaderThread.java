@@ -50,9 +50,9 @@ public class FileReaderThread extends Thread {
                     int burst = Integer.parseInt(leftParts[1].trim());
                     int prio = Integer.parseInt(leftParts[2].trim());
 
-                    PCB pcb = new PCB(id, burst, prio, memMB);
-                    pcb.arrivalTimeMs = 0; // all arrive at t=0
-                    queues.jobQueue.put(pcb);
+                    PCB pcb = SystemCalls.sysCreateProcess(id, burst, prio, memMB);
+                    SystemCalls.sysAdmitToJobQueue(pcb, queues);
+
                 }
             }
         } catch (Exception e) {
