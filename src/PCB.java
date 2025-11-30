@@ -3,14 +3,14 @@ import java.util.concurrent.atomic.AtomicLong;
 public class PCB {
     private static final AtomicLong SEQ = new AtomicLong(0);
 
-    public final long seq;           // insertion order (stability)
+    public final long seq;           // insertion order 
     public final int id;
     public final int burstTimeMs;
     public final int priority;       // 1 (lowest) .. 128 (highest)
     public final int memoryMB;
 
-    // runtime fields (Phase 3 will update these)
-    public volatile long arrivalTimeMs = 0;       // t=0 for all processes in spec
+    // runtime fields 
+    public volatile long arrivalTimeMs = 0;       // t=0 for all processes
     public volatile long readyAcceptedTimeMs = -1;
 
     public volatile long waitingTimeMs = 0;

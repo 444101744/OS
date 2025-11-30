@@ -39,13 +39,13 @@ public class Main {
         reader.start();
         loader.start();
 
-        // Wait until file is fully read
+        
         reader.join();
 
-        // Give Loader some time to load whatever fits into memory
+        
         Thread.sleep(500);
 
-        // Phase 2 hack: stop loader since we don't free memory yet
+        
         loader.interrupt();
         loader.join();
 
@@ -57,7 +57,7 @@ public class Main {
         System.out.printf("Jobs still in JobQueue (not loaded due to memory cap): %d%n",
                 queues.jobQueue.size());
 
-        // Take a copy of the ready queue into a list for scheduling
+        
         List<PCB> processes = new ArrayList<>(queues.readyQueue);
         if (processes.isEmpty()) {
             System.out.println("No processes in ready queue. Nothing to schedule.");
@@ -125,7 +125,7 @@ public class Main {
         break;
 
         case 3:
-            // Priority Scheduling with aging
+            // Priority Scheduling 
             result = Scheduler.runPriority(processes, 10); // aging every 10 ms
             System.out.println("\n=== Priority Scheduling Results ===");
             printResults(result, processes);
@@ -154,7 +154,7 @@ public class Main {
 
     private static void printResults(SchedulerResult result, List<PCB> processes) {
         System.out.println("\nGantt Chart:");
-        // Simple text Gantt: | P1 (0-10) | P2 (10-25) | ...
+        
         for (GanttEntry e : result.gantt) {
             System.out.printf("| P%d (%d-%d) ", e.processId, e.startTime, e.endTime);
         }

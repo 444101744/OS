@@ -7,7 +7,7 @@ import java.util.List;
 public class Scheduler {
 
     /**
-     * Non-preemptive Shortest Job First.
+     * Shortest Job First.
      * Assumes all processes arrive at time 0.
      */
     public static SchedulerResult runSJF(List<PCB> processes) {
@@ -15,10 +15,10 @@ public class Scheduler {
             return new SchedulerResult(new ArrayList<>(), 0.0, 0.0);
         }
 
-        // Make a copy so we don't mess with any external list order
+        
         List<PCB> procs = new ArrayList<>(processes);
 
-        // Sort by burst time, then by seq (arrival order)
+        
         procs.sort(Comparator
                 .comparingInt((PCB p) -> p.burstTimeMs)
                 .thenComparingLong(p -> p.seq));
@@ -29,15 +29,15 @@ public class Scheduler {
         long totalTurnaround = 0;
         int n = procs.size();
 
-        // "Degree of multiprogramming" at acceptance: how many were in memory/ready.
-        // Here, all are ready at t=0 => just use n as the threshold.
+        
+        
         int degreeOfMultiprogramming = n;
 
         for (PCB p : procs) {
             int start = currentTime;
             int end = currentTime + p.burstTimeMs;
 
-            long arrival = p.arrivalTimeMs; // should be 0 in this project
+            long arrival = p.arrivalTimeMs; 
             p.waitingTimeMs = start - arrival;
             p.turnaroundTimeMs = end - arrival;
             p.state = ProcessState.TERMINATED;
@@ -48,7 +48,7 @@ public class Scheduler {
             totalWaiting += p.waitingTimeMs;
             totalTurnaround += p.turnaroundTimeMs;
 
-            // Starvation detection rule from spec:
+            // Starvation detection:
             if (p.waitingTimeMs > degreeOfMultiprogramming) {
                 System.out.printf(
                         ">> [SJF] Starvation detected for P%d: waited %d ms (threshold %d)%n",
@@ -67,7 +67,7 @@ public class Scheduler {
      * Round Robin scheduling.
      * All processes arrive at time 0.
      * @param processes list of PCBs
-     * @param quantumMs time slice in ms (must be > 0)
+     * @param quantumMs time slice in ms
      */
     public static SchedulerResult runRR(List<PCB> processes, int quantumMs) {
         if (processes.isEmpty()) {
@@ -79,14 +79,14 @@ public class Scheduler {
 
         int n = processes.size();
 
-        // Copy so we don't rely on the original list's order.
+        
         List<PCB> procs = new ArrayList<>(processes);
 
-        // Remaining burst times
+        
         int[] remaining = new int[n];
         for (int i = 0; i < n; i++) {
             remaining[i] = procs.get(i).burstTimeMs;
-            // reset stats in case Scheduler is called after another algorithm
+            
             procs.get(i).waitingTimeMs = 0;
             procs.get(i).turnaroundTimeMs = 0;
             procs.get(i).state = ProcessState.READY;
@@ -94,7 +94,7 @@ public class Scheduler {
 
         Deque<Integer> queue = new ArrayDeque<>();
         for (int i = 0; i < n; i++) {
-            queue.addLast(i); // store indices into 'procs'
+            queue.addLast(i); 
         }
 
         List<GanttEntry> gantt = new ArrayList<>();
@@ -111,13 +111,13 @@ public class Scheduler {
             int start = currentTime;
             int end = currentTime + execTime;
 
-            // First we simulate running
+            
             currentTime = end;
             remaining[idx] -= execTime;
             gantt.add(new GanttEntry(p.id, start, end));
 
             if (remaining[idx] == 0) {
-                // Process finished
+                
                 p.state = ProcessState.TERMINATED;
                 p.turnaroundTimeMs = currentTime - p.arrivalTimeMs; // arrival assumed 0
                 p.waitingTimeMs = p.turnaroundTimeMs - p.burstTimeMs;
@@ -125,7 +125,7 @@ public class Scheduler {
                 totalTurnaround += p.turnaroundTimeMs;
                 finishedCount++;
             } else {
-                // Still has time left, go back to the end of the queue
+                
                 queue.addLast(idx);
             }
         }
@@ -175,8 +175,8 @@ public class Scheduler {
         long totalTurnaround = 0;
         int finishedCount = 0;
 
-        // We’ll use this as a starvation threshold like the spec says:
-        // "waited more than the degree of multiprogramming at acceptance"
+        
+        
         int degreeOfMultiprogramming = n;
 
 

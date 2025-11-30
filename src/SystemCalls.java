@@ -5,12 +5,12 @@ public class SystemCalls {
     public static PCB sysCreateProcess(int id, int burstTimeMs, int priority, int memoryMB) {
         PCB pcb = new PCB(id, burstTimeMs, priority, memoryMB);
         pcb.state = ProcessState.NEW;
-        pcb.arrivalTimeMs = 0; // as per project description, all arrive at time 0
+        pcb.arrivalTimeMs = 0; 
         return pcb;
     }
 
     public static void sysAdmitToJobQueue(PCB pcb, Queues queues) throws InterruptedException {
-        // In a real OS, this would change state from NEW to some intermediate.
+        
         pcb.state = ProcessState.NEW;
         queues.jobQueue.put(pcb);
     }

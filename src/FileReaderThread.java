@@ -27,12 +27,11 @@ public class FileReaderThread extends Thread {
                 String line;
                 while ((line = br.readLine()) != null) {
                     line = line.trim();
-                    // skip comments / markers
+                    
                     if (line.isEmpty() || line.startsWith("#") || line.startsWith("["))
                         continue;
 
-                    // Format: id:burst:priority;memory
-                    // Example: 1:25:4;500
+                    
                     String[] halves = line.split(";");
                     if (halves.length != 2) {
                         throw new IllegalArgumentException("Bad line: " + line);
